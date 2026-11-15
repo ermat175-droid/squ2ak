@@ -1,0 +1,27 @@
+# Глобальные значения; setg переопределяет их в текущем процессе.
+params:
+  timeout: 2.0
+  threads: 32
+auto_pipeline:
+  - module: recon/portscan
+    condition: always
+  - module: recon/banner
+    condition: always
+  - module: web/tech
+    condition: has_web
+  - module: web/dirb
+    condition: has_web
+  - module: web/sqli
+    condition: has_web
+    auto_params:
+      crawl: true
+  - module: web/lfi
+    condition: has_web
+    auto_params:
+      crawl: true
+  - module: templates/runner
+    condition: has_web
+  - module: misc/ftp_anon
+    condition: has_service:ftp
+  - module: misc/redis_unauth
+    condition: has_service:redis

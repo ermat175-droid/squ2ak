@@ -1,0 +1,9 @@
+rich==15.0.0
+prompt-toolkit==3.0.53
+httpx==0.28.1
+PyYAML==6.0.3
+pydantic==2.14.0
+dnspython==2.9.0
+requests==2.34.2
+paramiko==5.0.0
+beautifulsoup4==4.15.0

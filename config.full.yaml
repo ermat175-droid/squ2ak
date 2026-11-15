@@ -1,0 +1,76 @@
+# Full web pipeline: runs every web module. Scanner-only `ports`; other
+# stages reuse discovered services.
+# Run: ./squ2ak --config config.full.yaml --target <IP> --auto step
+params:
+  timeout: 3.0
+  threads: 16
+
+auto_pipeline:
+  - module: recon/portscan
+    condition: always
+    options:
+      ports: "21,22,25,53,80,110,139,143,443,445,993,995,1433,3000,3306,5000,5432,6379,8000,8080,8443,27017"
+      scan: connect
+  - module: recon/banner
+    condition: always
+  - module: web/tech
+    condition: has_service:http
+  - module: web/secheaders
+    condition: has_service:http
+  - module: web/http_methods
+    condition: has_service:http
+  - module: web/cors
+    condition: has_service:http
+  - module: web/dirb
+    condition: has_service:http
+    options:
+      max_words: 1000
+  - module: web/exposure
+    condition: has_service:http
+  - module: web/graphql
+    condition: has_service:http
+  - module: web/sqli
+    condition: has_service:http
+    auto_params:
+      crawl: true
+      max_urls: 20
+      max_depth: 2
+  - module: web/lfi
+    condition: has_service:http
+    auto_params:
+      crawl: true
+      max_urls: 20
+      max_depth: 2
+  - module: web/cmdi
+    condition: has_service:http
+    auto_params:
+      crawl: true
+      max_urls: 20
+      max_depth: 2
+      time_based: false
+  - module: web/xss
+    condition: has_service:http
+    auto_params:
+      crawl: true
+      max_urls: 20
+      max_depth: 2
+  - module: web/ssti
+    condition: has_service:http
+    auto_params:
+      crawl: true
+      max_urls: 20
+      max_depth: 2
+  - module: web/jwt
+    condition: has_service:http
+  - module: web/open_redirect
+    condition: has_service:http
+    auto_params:
+      crawl: true
+      max_urls: 20
+      max_depth: 2
+  - module: templates/runner
+    condition: has_service:http
+  - module: misc/ftp_anon
+    condition: has_service:ftp
+  - module: misc/redis_unauth
+    condition: has_service:redis

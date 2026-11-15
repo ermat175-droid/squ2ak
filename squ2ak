@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+set -euo pipefail
+# Разворачиваем симлинки, чтобы launcher работал и через ~/.local/bin/squ2ak.
+SOURCE="${BASH_SOURCE[0]}"
+while [[ -L "$SOURCE" ]]; do
+    DIR="$(cd -- "$(dirname -- "$SOURCE")" && pwd)"
+    SOURCE="$(readlink -- "$SOURCE")"
+    [[ "$SOURCE" != /* ]] && SOURCE="$DIR/$SOURCE"
+done
+SQU2AK_DIR="$(cd -- "$(dirname -- "$SOURCE")" && pwd)"
+if [[ -x "$SQU2AK_DIR/.venv/bin/python" ]]; then
+    exec "$SQU2AK_DIR/.venv/bin/python" "$SQU2AK_DIR/squ2ak.py" "$@"
+fi
+exec python3 "$SQU2AK_DIR/squ2ak.py" "$@"
